@@ -52,9 +52,11 @@ private:
 	bool		m_endFlag = false;
 
 	//カメラ
-	std::shared_ptr<KdCamera> m_spCamera = nullptr;
+	std::shared_ptr<KdCamera> m_spCamera = nullptr;//スマートポインタ
 
-
+	//ポリゴンデータ
+	std::shared_ptr<KdSquarePolygon> m_spPoly = nullptr;
+	
 
 //=====================================================
 // シングルトンパターン

@@ -64,6 +64,9 @@ void Application::PreUpdate()
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 void Application::Update()
 {
+
+
+
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -100,6 +103,9 @@ void Application::KdPostDraw()
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 void Application::PreDraw()
 {
+
+	m_spCamera->SetToShader();
+
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -119,6 +125,17 @@ void Application::Draw()
 	// 陰影のあるオブジェクト(不透明な物体や2Dキャラ)はBeginとEndの間にまとめてDrawする
 	KdShaderManager::Instance().m_StandardShader.BeginLit();
 	{
+		static float m_z = 5;
+
+		Math::Matrix _mat = Math::Matrix::CreateTranslation(0,0,m_z);
+		KdShaderManager::Instance().m_StandardShader.DrawPolygon(*m_spPoly,_mat);
+
+		if (GetAsyncKeyState(VK_UP) & 0x8000)m_z += 0.1f;
+		if (GetAsyncKeyState(VK_DOWN) & 0x8000)m_z -= 0.1f;
+		/*if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+		if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+		*/
+	
 	}
 	KdShaderManager::Instance().m_StandardShader.EndLit();
 
@@ -178,9 +195,9 @@ bool Application::Init(int w, int h)
 	// フルスクリーン確認
 	//===================================================================
 	bool bFullScreen = false;
-	if (MessageBoxA(m_window.GetWndHandle(), "フルスクリーンにしますか？", "確認", MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2) == IDYES) {
+	/*if (MessageBoxA(m_window.GetWndHandle(), "フルスクリーンにしますか？", "確認", MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2) == IDYES) {
 		bFullScreen = true;
-	}
+	}*/
 
 	//===================================================================
 	// Direct3D初期化
@@ -221,6 +238,19 @@ bool Application::Init(int w, int h)
 	//===================================================================
 	KdAudioManager::Instance().Init();
 
+	//====================================================================
+	// カメラ初期化
+	//====================================================================
+
+	m_spCamera = std::make_shared<KdCamera>();
+
+	//====================================================================
+	// ポリゴン初期化
+	//====================================================================
+
+	m_spPoly = std::make_shared<KdSquarePolygon>();
+
+	m_spPoly->SetMaterial("Asset/Data/Lesson/Character/Hamu.png");
 	
 
 	return true;
