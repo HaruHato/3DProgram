@@ -64,7 +64,22 @@ void Application::PreUpdate()
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 void Application::Update()
 {
+	//カメラ行列の更新
+	{
+		Math::Matrix _mScale = Math::Matrix::CreateScale(1);
 
+		//基準点（ターゲット）からどれだけ離れているか
+		Math::Matrix _mlocalPos = Math::Matrix::CreateTranslation(0, 6, 0);
+
+		//どれだけ傾いているか
+		Math::Matrix _mRotation = Math::Matrix::CreateRotationX(DirectX::XMConvertToRadians(45));
+
+
+		//カメラのワールド行列を作成、適応させる
+		Math::Matrix _mWorld = _mScale * _mRotation * _mlocalPos;
+		m_spCamera->SetCameraMatrix(_mWorld);
+
+	}
 
 
 }
@@ -127,7 +142,9 @@ void Application::Draw()
 	{
 		static float m_z = 5;
 
-		Math::Matrix _mat = Math::Matrix::CreateTranslation(0,0,m_z);
+		Math::Matrix _mat = Math::Matrix::Identity;
+		_mat._43 = 5;
+		//Math::Matrix::CreateTranslation(0,0,m_z);
 		KdShaderManager::Instance().m_StandardShader.DrawPolygon(*m_spPoly,_mat);
 
 		if (GetAsyncKeyState(VK_UP) & 0x8000)m_z += 0.1f;
@@ -136,6 +153,10 @@ void Application::Draw()
 		if (GetAsyncKeyState(VK_LEFT) & 0x8000)
 		*/
 	
+
+		
+		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel);
+
 	}
 	KdShaderManager::Instance().m_StandardShader.EndLit();
 
@@ -251,7 +272,17 @@ bool Application::Init(int w, int h)
 	m_spPoly = std::make_shared<KdSquarePolygon>();
 
 	m_spPoly->SetMaterial("Asset/Data/Lesson/Character/Hamu.png");
+
+	m_spPoly->SetPivot(KdSquarePolygon::PivotType::Center_Bottom );
 	
+	//====================================================================
+	// 地形初期化
+	//====================================================================
+
+	m_spModel = std::make_shared<KdModelData>();
+
+	m_spModel->Load("Asset/Data/Lesson/Terrain/Terrain.gltf");
+
 
 	return true;
 }
