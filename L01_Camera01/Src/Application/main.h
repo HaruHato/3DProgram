@@ -60,6 +60,9 @@ private:
 	//地形データ
 	std::shared_ptr<KdModelData> m_spModel = nullptr;
 
+	Math::Matrix _mHamWorld = Math::Matrix::Identity;
+
+	Math::Vector3 _mPos = { 0,0,0 };
 
 //=====================================================
 // シングルトンパターン
